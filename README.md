@@ -12,12 +12,19 @@ As UserInterface is a python package, you may need to manually import 'icons_rc'
 
 # Shortkeys
 All keys on Numpad
+
 Backspace --> Clear
+
 Esc --> CE
+
 Delete --> C
+
 Ctrl + s --> sqrt
+
 Alt + s --> squared
+
 Ctrl + r --> reciprocate
+
 Ctrl + n --> negate
 
 
