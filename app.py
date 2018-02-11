@@ -8,8 +8,7 @@ app = QApplication(sys.argv)
 form = CalculatorUi()
 
 # splash screen
-splash_image = QPixmap('./icons/calculator.png')
-splash_image = splash_image.scaled(400, 400)
+splash_image = QPixmap(':/calculator.png').scaled(400, 400)
 splash = QSplashScreen(splash_image)
 splash.show()
 

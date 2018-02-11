@@ -1,6 +1,15 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from UserInterface.ui_calculator import Ui_calculator
+from math import sqrt
+
+
+def isfloat(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
 
 
 class CalculatorUi(QMainWindow, Ui_calculator):
@@ -17,17 +26,16 @@ class CalculatorUi(QMainWindow, Ui_calculator):
         self.operation_plainTextEdit.setReadOnly(True)
         self.add_system_tray()
         self.setWindowFlags(self.windowFlags() |
-                              Qt.WindowMinimizeButtonHint |
-                              Qt.WindowSystemMenuHint)
+                            Qt.WindowMinimizeButtonHint |
+                            Qt.WindowSystemMenuHint)
 
-
-        self.set_shortcuts()
+        self.set_shortkeys()
 
         self.present_result()
 
         self.numeric_signals()
-        self.operand_signal()
-        self.c_signal()
+        self.operator_signals()
+        self.c_signals()
 
     def changeEvent(self, event: QEvent):
         if event.type() == QEvent.WindowStateChange:
@@ -42,7 +50,8 @@ class CalculatorUi(QMainWindow, Ui_calculator):
         self.close()
 
     def add_system_tray(self):
-        systray_icon = QIcon('./icons/calculator.png')
+        # systray_icon = QIcon(':/icons/calculator.png')
+        systray_icon = QIcon(':/calculator.png')
         systray = QSystemTrayIcon(systray_icon, self)
         menu = QMenu()
         restore = QAction('Restore', self)
@@ -67,10 +76,14 @@ class CalculatorUi(QMainWindow, Ui_calculator):
         if reason == QSystemTrayIcon.DoubleClick:
             if self.isHidden():
                 self.setVisible(True)
+                self.systray.showMessage('eCalculator', 'eCalculator becomes visible.',
+                                 icon=QSystemTrayIcon.Information, msecs=2000)
             else:
                 self.setVisible(False)
+                self.systray.showMessage('eCalculator', 'eCalculator is in the system tray.',
+                                 icon=QSystemTrayIcon.Information, msecs=2000)
 
-    def set_shortcuts(self):
+    def set_shortkeys(self):
         self.pushButton_0.setShortcut(QKeySequence('Numpad+0'))
         self.pushButton_1.setShortcut(QKeySequence('Numpad+1'))
         self.pushButton_2.setShortcut(QKeySequence('Numpad+2'))
@@ -90,6 +103,10 @@ class CalculatorUi(QMainWindow, Ui_calculator):
         self.pushButton_ce.setShortcut(QKeySequence('Esc'))
         self.pushButton_clear.setShortcut(QKeySequence('Backspace'))
         self.pushButton_equal.setShortcut(QKeySequence('Numpad+Enter'))
+        self.pushButton_squared.setShortcut(QKeySequence('Alt+s'))
+        self.pushButton_sqrt.setShortcut(QKeySequence('Ctrl+s'))
+        self.pushButton_reciproc.setShortcut(QKeySequence('Ctrl+r'))
+        self.pushButton_negate.setShortcut(QKeySequence('Ctrl+n'))
 
         self.actionAbout_Calculator.triggered.connect(self.about_calculator)
         self.actionView_Help.triggered.connect(self.view_Help)
@@ -117,7 +134,7 @@ class CalculatorUi(QMainWindow, Ui_calculator):
         self.pushButton_9.clicked.connect(self.get_9)
         self.pushButton_decimal_point.clicked.connect(self.decimal_point)
 
-    def operand_signal(self):
+    def operator_signals(self):
         self.pushButton_sum.clicked.connect(self.sum)
         self.pushButton_subtract.clicked.connect(self.subtract)
         self.pushButton_multiply.clicked.connect(self.multiply)
@@ -125,8 +142,10 @@ class CalculatorUi(QMainWindow, Ui_calculator):
         self.pushButton_equal.clicked.connect(self.equal)
         self.pushButton_negate.clicked.connect(self.negate)
         self.pushButton_reciproc.clicked.connect(self.reciproc)
+        self.pushButton_sqrt.clicked.connect(self.squared_root)
+        self.pushButton_squared.clicked.connect(self.squared)
 
-    def c_signal(self):
+    def c_signals(self):
         self.pushButton_clear.clicked.connect(self.clear)
         self.pushButton_ce.clicked.connect(self.ce)
         self.pushButton_c.clicked.connect(self.c)
@@ -145,26 +164,36 @@ class CalculatorUi(QMainWindow, Ui_calculator):
         self.input = self.input[:-1]
         self.update_operation_text()
 
-    def reciproc(self):
+    def special_operate(self, operator):
         if self.input == '':
             self.input = self.result_textBrowser.toPlainText()
-
         temp_input = self.input
-
         if not isfloat(self.input):
-            temp = self.input.partition('reciproc(')[2].partition(')')[0]
-            assert temp != '', self.present_result('invalid input')
             temp_input = self.result_textBrowser.toPlainText()
-
         try:
-            temp_result = 1/float(temp_input)
-        except ZeroDivisionError:
-            self.present_result('cannot divide by zero.')
-            return
+            if operator == 'squared':
+                temp_result = float(temp_input) ** 2
+            elif operator == 'sqrt':
+                temp_result = sqrt(float(temp_input))
+            elif operator == 'reciproc':
+                temp_result = 1 / float(temp_input)
 
-        self.input = 'reciproc({})'.format(self.input)
-        self.update_operation_text()
-        self.present_result(message=str(temp_result))
+            self.input = operator + '({})'.format(self.input)
+            self.update_operation_text()
+            self.present_result(message=str(temp_result))
+            return True
+        except ValueError:
+            self.present_result('Invalid Input')
+            return False
+
+    def squared(self):
+        self.special_operate('squared')
+
+    def squared_root(self):
+        self.special_operate('sqrt')
+
+    def reciproc(self):
+        self.special_operate('reciproc')
 
     def operate(self):
         input_float = 's'
@@ -194,30 +223,43 @@ class CalculatorUi(QMainWindow, Ui_calculator):
         if self.input == '':
             self.input = self.result_textBrowser.toPlainText()
 
-        self.negate_input() # 42 --> -42
+        self.negate_input()  # 42 --> -42
 
     def negate_input(self):
-        if self.input.strip('-').isdecimal():
-            new_input = str(int(self.input) * -1)
+        special_operators = ['reciproc', 'sqrt', 'squared']
+        found_special = False
+
+        for operator in special_operators:
+            if self.input.find(operator) != -1:
+                found_special = True
+                break
+
+        if found_special:
+            new_input = '-' + self.result_textBrowser.toPlainText()
         else:
-            new_input = str(float(self.input) * -1)
+            if self.input.strip('-').isdecimal():
+                new_input = str(int(self.input) * -1)
+            else:
+                new_input = str(float(self.input) * -1)
         self.input = new_input
         self.update_operation_text()
 
     def validate_input(self):
-        if isfloat(self.input) or self.input.find('reciproc') != -1:
+        if isfloat(self.input) \
+                or self.input.find('reciproc') != -1 \
+                or self.input.find('sqrt') != -1:
             return True
         else:
             return False
 
     def do_operation(self, operator: str):
-        if self.input == '' and self.current_operation == '': # this happens after pressing =
+        if self.input == '' and self.current_operation == '':  # this happens after pressing =
             self.input = self.result_textBrowser.toPlainText()
             self.result = float(self.input)
             self.selected_operator = operator
             self.fix_input_field(operator)
             return
-        elif self.input == '' and self.current_operation != '':
+        elif self.input == '' and self.current_operation != '':  # this happens when you change operator
             self.selected_operator = operator
             self.current_operation = self.current_operation[:-2] + operator + ' '
             self.operation_plainTextEdit.setPlainText(self.current_operation)
@@ -320,9 +362,4 @@ class CalculatorUi(QMainWindow, Ui_calculator):
         self.update_operation_text()
 
 
-def isfloat(value):
-    try:
-        float(value)
-        return True
-    except ValueError:
-        return False
+
