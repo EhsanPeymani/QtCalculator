@@ -10,6 +10,9 @@ For compiling resources, use 'compile_resources.py' in the 'UserInterface' folde
 
 As UserInterface is a python package, you may need to manually import 'icons_rc' in the 'ui_calculator.py': import UserInterface.icons_rc
 
+# Installer
+You can install the app by running eCalculator.exe file. 
+
 # Shortkeys
 All keys on Numpad
 
