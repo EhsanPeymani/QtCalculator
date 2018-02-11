@@ -11,7 +11,12 @@ For compiling resources, use 'compile_resources.py' in the 'UserInterface' folde
 As UserInterface is a python package, you may need to manually import 'icons_rc' in the 'ui_calculator.py': import UserInterface.icons_rc
 
 # Installer
-You can install the app by running eCalculator.exe file. 
+You can install the app by running ./Output/eCalculator.exe file.
+The executable binary is located in ./dist/app.exe file. 
+
+The binary is created using PyInstaller. See build_executable.py file for commands. 
+
+The installer was created using Inno Setup Compiler. The project file is setup.iss. 
 
 # Shortkeys
 All keys on Numpad
@@ -31,8 +36,7 @@ Ctrl + r --> reciprocate
 Ctrl + n --> negate
 
 
-
-# Current Issues:
+# Known Issues:
 Fixing the issue related to precision. Use fraction and decimal instead of float when possible
 For example, I need to solve sq(sqrt(5.0)) <> 5.0
 
