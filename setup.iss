@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "eCalculator"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.1.0"
 #define MyAppPublisher "Ehsan Peymani"
 #define MyAppURL "https://github.com/EhsanPeymani/QtCalculator"
 #define MyAppExeName "app.exe"
@@ -22,7 +22,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DisableProgramGroupPage=yes
 OutputBaseFilename=eCalculator
-SetupIconFile=C:\Users\247699\OneDrive\CheatSheets\Python\HomeProjects\Calculator\icons\calculator.ico
+SetupIconFile=C:\Users\247699\OneDrive\CheatSheets\Python\HomeProjects\QtCalculator\icons\calculator.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -33,7 +33,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\247699\OneDrive\CheatSheets\Python\HomeProjects\Calculator\dist\app.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\247699\OneDrive\CheatSheets\Python\HomeProjects\QtCalculator\dist\app.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

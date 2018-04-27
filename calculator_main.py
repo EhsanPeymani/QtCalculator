@@ -3,7 +3,6 @@ import decimal
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from UserInterface.ui_calculator import Ui_calculator
-from math import sqrt
 from decimal import Decimal
 
 # to make sure that we do not directly convert float to decimal
@@ -104,7 +103,7 @@ class CalculatorUi(QMainWindow, Ui_calculator):
         self.pushButton_subtract.setShortcut(QKeySequence('Numpad+-'))
         self.pushButton_multiply.setShortcut(QKeySequence('Numpad+*'))
         self.pushButton_divide.setShortcut(QKeySequence('Numpad+/'))
-        self.pushButton_decimal_point.setShortcut(QKeySequence('Numpad+,'))
+        self.pushButton_decimal_point.setShortcut(QKeySequence('Numpad+.'))
         self.pushButton_c.setShortcut(QKeySequence('Delete'))
         self.pushButton_ce.setShortcut(QKeySequence('Esc'))
         self.pushButton_clear.setShortcut(QKeySequence('Backspace'))
@@ -180,7 +179,7 @@ class CalculatorUi(QMainWindow, Ui_calculator):
             if operator == 'squared':
                 temp_result = Decimal(temp_input) ** 2
             elif operator == 'sqrt':
-                temp_result = sqrt(Decimal(temp_input))
+                temp_result = Decimal(temp_input).sqrt()
             elif operator == 'reciproc':
                 temp_result = 1 / Decimal(temp_input)
 
