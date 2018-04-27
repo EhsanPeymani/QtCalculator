@@ -1,7 +1,13 @@
+import decimal
+
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from UserInterface.ui_calculator import Ui_calculator
 from math import sqrt
+from decimal import Decimal
+
+# to make sure that we do not directly convert float to decimal
+decimal.getcontext().traps[decimal.FloatOperation] = True
 
 
 def isfloat(value):
@@ -19,7 +25,7 @@ class CalculatorUi(QMainWindow, Ui_calculator):
         self.setupUi(self)
 
         self.input = ''
-        self.result = 0.0
+        self.result = Decimal('0')
         self.current_operation = ' '
         self.selected_operator = ''
 
@@ -172,11 +178,11 @@ class CalculatorUi(QMainWindow, Ui_calculator):
             temp_input = self.result_textBrowser.toPlainText()
         try:
             if operator == 'squared':
-                temp_result = float(temp_input) ** 2
+                temp_result = Decimal(temp_input) ** 2
             elif operator == 'sqrt':
-                temp_result = sqrt(float(temp_input))
+                temp_result = sqrt(Decimal(temp_input))
             elif operator == 'reciproc':
-                temp_result = 1 / float(temp_input)
+                temp_result = 1 / Decimal(temp_input)
 
             self.input = operator + '({})'.format(self.input)
             self.update_operation_text()
@@ -199,11 +205,11 @@ class CalculatorUi(QMainWindow, Ui_calculator):
         input_float = 's'
 
         if isfloat(self.input):
-            input_float = float(self.input)
+            input_float = Decimal(self.input)
         else:
-            input_float = float(self.result_textBrowser.toPlainText())
+            input_float = Decimal(self.result_textBrowser.toPlainText())
 
-        assert isinstance(input_float, float), self.present_result('bad input')
+        assert isinstance(input_float, Decimal), self.present_result('bad input')
 
         if self.selected_operator == '':
             self.result = input_float
@@ -240,7 +246,7 @@ class CalculatorUi(QMainWindow, Ui_calculator):
             if self.input.strip('-').isdecimal():
                 new_input = str(int(self.input) * -1)
             else:
-                new_input = str(float(self.input) * -1)
+                new_input = str(Decimal(self.input) * -1)
         self.input = new_input
         self.update_operation_text()
 
@@ -255,7 +261,7 @@ class CalculatorUi(QMainWindow, Ui_calculator):
     def do_operation(self, operator: str):
         if self.input == '' and self.current_operation == '':  # this happens after pressing =
             self.input = self.result_textBrowser.toPlainText()
-            self.result = float(self.input)
+            self.result = Decimal(self.input)
             self.selected_operator = operator
             self.fix_input_field(operator)
             return

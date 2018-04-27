@@ -8,6 +8,5 @@ cmd = 'pyi-makespec app.py -F -w --icon ./icons/calculator.ico'
 print(cmd)
 os.system(cmd)
 
-
 cmd = 'pyinstaller app.spec'
 os.system(cmd)

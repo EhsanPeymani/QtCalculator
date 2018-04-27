@@ -9,7 +9,6 @@ cmd = pyuic + icons_path + '\icons\icons.qrc -o icons_rc.py -py3'
 # the generated py file must live in the root folder
 # the name of the generated python is very imported, since the UI python file need to import it s icons_rc.py
 
-
 try:
     os.system(cmd)
     print('resources compiled successfully.')
