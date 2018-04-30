@@ -40,9 +40,4 @@ Ctrl + r --> reciprocate
 Ctrl + n --> negate
 
 
-# Known Issues:
-Fixing the issue related to precision. Use fraction and decimal instead of float when possible
-For example, I need to solve sq(sqrt(5.0)) <> 5.0
-
-
 
